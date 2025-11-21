@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   mode: "create" | "edit";
@@ -13,19 +14,24 @@ type Props = {
 };
 
 export default function ProductoForm({ mode, initial }: Props) {
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
+
   const [form, setForm] = useState({
     nombre: initial?.nombre ?? "",
-    cantidad: initial?.cantidad ?? 0,
+    cantidad: initial ? String(initial.cantidad) : "",
     unidad: initial?.unidad ?? "",
-    valor_unitario: initial?.valor_unitario ?? 0,
+    valor_unitario: initial?.valor_unitario
+      ? String(initial.valor_unitario)
+      : "",
   });
   useEffect(() => {
     if (initial) {
       setForm({
         nombre: initial.nombre ?? "",
-        cantidad: initial.cantidad ?? 0,
+        cantidad: String(initial.cantidad ?? ""),
         unidad: initial.unidad ?? "",
-        valor_unitario: initial.valor_unitario ?? 0,
+        valor_unitario: String(initial.valor_unitario ?? ""),
       });
     }
   }, [initial]);
@@ -40,6 +46,8 @@ export default function ProductoForm({ mode, initial }: Props) {
         form.valor_unitario === null ? null : Number(form.valor_unitario),
     };
 
+    setSaving(true);
+
     const url =
       mode === "create" ? "/api/productos" : `/api/productos/${initial?.id}`;
     const method = mode === "create" ? "POST" : "PUT";
@@ -48,10 +56,19 @@ export default function ProductoForm({ mode, initial }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+
+    setSaving(false);
+
     if (res.ok) {
-      if (mode === "create")
-        setForm({ nombre: "", cantidad: 0, unidad: "", valor_unitario: 0 });
-      location.reload();
+      if (mode === "create") {
+        alert("Producto creado correctamente");
+        router.refresh();
+        setForm({ nombre: "", cantidad: "", unidad: "", valor_unitario: "" });
+      } else {
+        alert("Producto actualizado correctamente");
+        router.push("/productos");
+        router.refresh();
+      }
     } else {
       const j = await res.json().catch(() => ({}));
       alert(j?.error ?? "Error guardando producto");
@@ -72,7 +89,7 @@ export default function ProductoForm({ mode, initial }: Props) {
         type="number"
         placeholder="Cantidad"
         value={form.cantidad}
-        onChange={(e) => setForm({ ...form, cantidad: Number(e.target.value) })}
+        onChange={(e) => setForm({ ...form, cantidad: e.target.value })}
       />
       <input
         className="rounded-lg border px-3 py-2"
@@ -85,9 +102,7 @@ export default function ProductoForm({ mode, initial }: Props) {
         type="number"
         placeholder="Valor unitario"
         value={form.valor_unitario ?? 0}
-        onChange={(e) =>
-          setForm({ ...form, valor_unitario: Number(e.target.value) })
-        }
+        onChange={(e) => setForm({ ...form, valor_unitario: e.target.value })}
       />
       <div className="md:col-span-4">
         <button className="rounded-lg bg-black px-3 py-2 text-sm text-white">

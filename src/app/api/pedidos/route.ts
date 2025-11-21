@@ -6,7 +6,19 @@ export async function GET() {
   const supabase = supabaseServer();
   const { data, error } = await supabase
     .from("pedidos")
-    .select("*")
+    .select(
+      `
+    id,
+    fecha,
+    cantidad,
+    clientes (
+      restaurante
+    ),
+    productos (
+      nombre
+    )
+  `
+    )
     .order("fecha", { ascending: false });
 
   if (error)

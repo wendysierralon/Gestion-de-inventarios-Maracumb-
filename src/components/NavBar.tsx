@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LogoutButton from "./LogoutButton";
+import Image from "next/image";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -12,6 +13,15 @@ export default function NavBar() {
     <header className="w-full border-b bg-white">
       <div className="mx-auto flex max-w-5xl items-center justify-between p-3">
         <nav className="flex gap-4 text-sm">
+          <a href="/" className="flex items-center gap-2">
+            <Image
+              src="/logo.png"
+              alt="Maracumbé Logo"
+              width={50}
+              height={50}
+              className="rounded-md"
+            />
+          </a>
           <Link href="/productos" className="hover:underline">
             Productos
           </Link>

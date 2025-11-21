@@ -8,6 +8,7 @@ async function getProducts() {
 }
 
 import ProductoForm from "@/components/forms/ProductoForm";
+import ProductoDeleteForm from "@/components/forms/ProductDeleteForm";
 
 export default async function ProductoPage() {
   const productos = await getProducts();
@@ -16,6 +17,11 @@ export default async function ProductoPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Productos</h1>
+      </div>
+      <div className="flex items-center justify-between ">
+        <h2 className="mb-3 text-sm font-medium">
+          Crea, edita y elimina productos y su stock.
+        </h2>
       </div>
 
       {/* Crear producto */}
@@ -54,28 +60,7 @@ export default async function ProductoPage() {
                   >
                     Editar
                   </a>
-                  <form
-                    action={`/api/productos/${p.id}`}
-                    method="post"
-                    className="inline"
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      const ok = confirm("Eliminar producto?");
-                      if (!ok) return;
-                      const r = await fetch(`/api/productos/${p.id}`, {
-                        method: "DELETE",
-                      });
-                      if (r.ok) location.reload();
-                      else alert("No se pudo eliminar");
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="text-red-600 hover:underline"
-                    >
-                      Eliminar
-                    </button>
-                  </form>
+                  <ProductoDeleteForm id={p.id} />
                 </td>
               </tr>
             ))}

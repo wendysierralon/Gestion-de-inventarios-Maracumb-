@@ -8,10 +8,11 @@ async function getCliente(id: string) {
 }
 
 import ClienteForm from "@/components/forms/ClienteForm";
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 export default async function EditarClientePage({ params }: Params) {
-  const cliente = await getCliente(params.id);
+  const { id } = await params;
+  const cliente = await getCliente(id);
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">Editar cliente</h1>

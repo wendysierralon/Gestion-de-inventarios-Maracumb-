@@ -1,27 +1,18 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 
-type Ctx = { params?: { id?: string } };
+type Ctx = { params: Promise<{ id?: string }> };
 
 //Get a client by id
 export async function GET(req: Request, ctx: Ctx) {
-  let id = ctx?.params?.id;
-  if (!id) {
-    const url = new URL(req.url);
-    const segments = url.pathname.split("/").filter(Boolean);
-    id = segments[segments.length - 1];
-  }
-  if (!id) {
-    return NextResponse.json(
-      { error: "Falta el id en la ruta" },
-      { status: 400 }
-    );
-  }
+  const { id } = await ctx.params;
+
   const supabase = supabaseServer();
   const { data, error } = await supabase
     .from("clientes")
     .select("*")
-    .eq("id", id);
+    .eq("id", id)
+    .single();
   if (error)
     return NextResponse.json({ error: error.message }, { status: 404 });
   return NextResponse.json(data);
@@ -29,18 +20,15 @@ export async function GET(req: Request, ctx: Ctx) {
 
 //Update a client by id
 export async function PUT(req: Request, ctx: Ctx) {
-  let id = ctx?.params?.id;
-  if (!id) {
-    const url = new URL(req.url);
-    const segments = url.pathname.split("/").filter(Boolean);
-    id = segments[segments.length - 1];
-  }
-  if (!id) {
+  const { id } = await ctx.params;
+
+  if (!id || id === "undefined") {
     return NextResponse.json(
-      { error: "Falta el id en la ruta" },
+      { error: "ID inválido en la ruta" },
       { status: 400 }
     );
   }
+
   const supabase = supabaseServer();
   const b = await req.json();
 
@@ -69,15 +57,11 @@ export async function PUT(req: Request, ctx: Ctx) {
 }
 //Delete a client by id
 export async function DELETE(req: Request, ctx: Ctx) {
-  let id = ctx?.params?.id;
-  if (!id) {
-    const url = new URL(req.url);
-    const segments = url.pathname.split("/").filter(Boolean);
-    id = segments[segments.length - 1];
-  }
-  if (!id) {
+  const { id } = await ctx.params;
+
+  if (!id || id === "undefined") {
     return NextResponse.json(
-      { error: "Falta el id en la ruta" },
+      { error: "ID inválido en la ruta" },
       { status: 400 }
     );
   }

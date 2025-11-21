@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { firebaseAuth } from "@/lib/firebase/client";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -42,35 +43,49 @@ export default function LoginPage() {
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <form
-        onSubmit={onSubmit}
-        className="w-full max-w-sm space-y-4 bg-white p-6 rounded-xl border"
-      >
-        <h1 className="text-xl font-semibold">Iniciar sesión</h1>
-        {err && <div className="text-sm text-red-600">{err}</div>}
-        <input
-          className="w-full rounded-lg border px-3 py-2 text-sm"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          className="w-full rounded-lg border px-3 py-2 text-sm"
-          type="password"
-          placeholder="Contraseña"
-          value={pass}
-          onChange={(e) => setPass(e.target.value)}
-          required
-        />
-        <button
-          disabled={loading}
-          className="w-full rounded-lg bg-black text-white px-3 py-2 text-sm"
+      <div className="w-full max-w-sm space-y-4 bg-white p-6 rounded-xl border text-center">
+        <div className="flex justify-center">
+          <Image
+            src="/logo.png"
+            alt="Maracumbé Logo"
+            width={100}
+            height={100}
+            className="rounded-md mx-auto"
+          />
+        </div>
+        <h1 className="text-lg font-semibold text-gray-800">
+          Sistema de gestión de pedidos
+        </h1>
+        <form
+          onSubmit={onSubmit}
+          className="w-full max-w-sm space-y-4 bg-white p-6 rounded-xl border"
         >
-          {loading ? "Ingresando..." : "Ingresar"}
-        </button>
-      </form>
+          <h1 className="text-xl font-semibold">Iniciar sesión</h1>
+          {err && <div className="text-sm text-red-600">{err}</div>}
+          <input
+            className="w-full rounded-lg border px-3 py-2 text-sm"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className="w-full rounded-lg border px-3 py-2 text-sm"
+            type="password"
+            placeholder="Contraseña"
+            value={pass}
+            onChange={(e) => setPass(e.target.value)}
+            required
+          />
+          <button
+            disabled={loading}
+            className="w-full rounded-lg bg-black text-white px-3 py-2 text-sm"
+          >
+            {loading ? "Ingresando..." : "Ingresar"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

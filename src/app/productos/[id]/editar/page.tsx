@@ -9,10 +9,11 @@ async function getProduct(id: string) {
 
 import ProductoForm from "@/components/forms/ProductoForm";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 export default async function EditarProductoPage({ params }: Params) {
-  const producto = await getProduct(params.id);
+  const { id } = await params;
+  const producto = await getProduct(id);
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">Editar producto</h1>

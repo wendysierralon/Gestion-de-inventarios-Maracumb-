@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type Cliente = {
   id: string;
@@ -17,6 +18,9 @@ export default function ClienteForm({
   mode: "create" | "edit";
   initial?: Cliente;
 }) {
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
+
   const [form, setForm] = useState({
     restaurante: initial?.restaurante ?? "",
     nombre_propietario: initial?.nombre_propietario ?? "",
@@ -43,6 +47,9 @@ export default function ClienteForm({
       alert("Restaurante y nombre del propietario son obligatorios");
       return;
     }
+
+    setSaving(true);
+
     const payload = {
       restaurante: form.restaurante.trim(),
       nombre_propietario: form.nombre_propietario.trim(),
@@ -58,8 +65,13 @@ export default function ClienteForm({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+
+    setSaving(false);
+
     if (r.ok) {
       if (mode === "create") {
+        alert("Cliente creado correctamente");
+        router.refresh();
         setForm({
           restaurante: "",
           nombre_propietario: "",
@@ -67,8 +79,11 @@ export default function ClienteForm({
           direccion: "",
           ciudad: "",
         });
+      } else {
+        alert("Cliente actualizado correctamente");
+        router.push("/clientes");
+        router.refresh();
       }
-      location.reload();
     } else {
       const j = await r.json().catch(() => ({}));
       alert(j?.error ?? "Error guardando cliente");
@@ -112,8 +127,15 @@ export default function ClienteForm({
         onChange={(e) => setForm({ ...form, ciudad: e.target.value })}
       />
       <div className="md:col-span-3">
-        <button className="rounded-lg bg-black px-3 py-2 text-sm text-white">
-          {mode === "create" ? "Crear" : "Guardar cambios"}
+        <button
+          className="rounded-lg bg-black px-3 py-2 text-sm text-white"
+          disabled={saving}
+        >
+          {saving
+            ? "Guardando..."
+            : mode === "create"
+            ? "Crear"
+            : "Guardar cambios"}
         </button>
       </div>
     </form>

@@ -8,6 +8,7 @@ async function getClients() {
 }
 
 import ClienteForm from "@/components/forms/ClienteForm";
+import ClienteDeleteButton from "@/components/forms/ClienteDeleteButton";
 
 export default async function ClientesPage() {
   const clientes = await getClients();
@@ -15,6 +16,12 @@ export default async function ClientesPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">Clientes</h1>
+
+      <div className="flex items-center justify-between">
+        <h2 className="mb-3 text-sm font-medium">
+          Crea, edita y elimina clientes.
+        </h2>
+      </div>
 
       <div className="rounded-xl border bg-white p-4">
         <h2 className="mb-3 text-sm font-medium">Nuevo cliente</h2>
@@ -48,19 +55,7 @@ export default async function ClientesPage() {
                   >
                     Editar
                   </a>
-                  <button
-                    className="text-red-600 hover:underline"
-                    onClick={async () => {
-                      if (!confirm("Eliminar cliente?")) return;
-                      const r = await fetch(`/api/clientes/${c.id}`, {
-                        method: "DELETE}",
-                      });
-                      if (r.ok) location.reload();
-                      else alert("No se pudo eliminar");
-                    }}
-                  >
-                    Eliminar
-                  </button>
+                  <ClienteDeleteButton id={c.id} />
                 </td>
               </tr>
             ))}
